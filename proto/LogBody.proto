@@ -1,0 +1,12 @@
+option java_package = "com.logger.common.proto";
+option java_outer_classname = "LogBodyModule";
+
+message PBLogMessage {
+    required int32 bid = 1;
+    required string className = 2;
+    required int32 lineNumber = 3;
+    required string methodName = 4;
+    required string message = 5;
+    required int64 dateTime = 6;
+    required string level = 7;
+}
