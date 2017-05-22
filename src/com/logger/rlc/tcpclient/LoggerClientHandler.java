@@ -15,8 +15,15 @@ public class LoggerClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
         // you can use the Object from Server here
-        System.out.println("client receive msg:"+msg);
+        System.out.println("client receive msg:"+new String((byte[])msg));
         //ctx.close();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        ctx.close();
+        LoggerTransferClient.clear();
     }
 
     @Override

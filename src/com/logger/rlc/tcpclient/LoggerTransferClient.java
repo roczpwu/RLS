@@ -26,6 +26,10 @@ public class LoggerTransferClient {
         return instance;
     }
 
+    public static void clear() {
+        instance = null;
+    }
+
     private ChannelFuture future;
 
     private LoggerTransferClient(String host, int port) {
