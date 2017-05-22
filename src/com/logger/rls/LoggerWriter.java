@@ -60,7 +60,14 @@ public class LoggerWriter {
             sb.append(logBody.getMessage()).append("\n");
             String fileName = ServerConfig.getServerConfig()
                     .getLogPathMap().get(bid)+"-"+ctime.substring(0, 10)+".log";
-            FileUtil.append(sb.toString(), fileName);
+            String logStr = sb.toString();
+            System.out.println(logStr);
+            String configLevel = ServerConfig.getServerConfig().getLogLevelMap().get(bid);
+            String targetLevel = logBody.getLevel();
+            int configPrior = LogLevel.getPriorty(configLevel);
+            int targetPrior = LogLevel.getPriorty(targetLevel);
+            if (targetPrior>=configPrior)
+                FileUtil.append(logStr, fileName);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("illegal log protobuf bytes.");
