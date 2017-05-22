@@ -43,9 +43,10 @@ public class LoggerTransferClient {
                         }
                     });
 
-            future = bootstrap.connect(host, port).sync();
+            future = bootstrap.connect(host, port);
+            //future = bootstrap.connect(host, port).sync();
 
-            future.channel().closeFuture().sync();
+            //future.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
             eventLoopGroup.shutdownGracefully();
