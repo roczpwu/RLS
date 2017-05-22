@@ -29,8 +29,10 @@ public class LoggerClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-
+        LoggerTransferClient.clear();
         cause.printStackTrace();
         ctx.close();
     }
+
+
 }

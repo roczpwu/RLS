@@ -9,6 +9,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * User: rocwu
@@ -27,12 +31,28 @@ public class LoggerTransferClient {
     }
 
     public static void clear() {
-        instance = null;
+        if (instance != null) {
+            instance.connected.set(false);
+            try {
+                instance.future.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private ChannelFuture future;
+    private AtomicBoolean connected = new AtomicBoolean(false);
+    private String host;
+    private int port;
 
     private LoggerTransferClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+        connect(host, port);
+    }
+
+    private void connect(String host, int port) {
         Bootstrap bootstrap = new Bootstrap();
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
@@ -47,8 +67,17 @@ public class LoggerTransferClient {
                         }
                     });
 
-            future = bootstrap.connect(host, port);
-            //future = bootstrap.connect(host, port).sync();
+            future = bootstrap.connect(host, port).sync();
+            future.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (future.isSuccess()) {
+                        connected.set(true);
+                    } else {
+                        connected.set(false);
+                    }
+                }
+            });
 
             //future.channel().closeFuture().sync();
         } catch (Exception e) {
@@ -58,6 +87,13 @@ public class LoggerTransferClient {
     }
 
     public void send(byte[] bytes) {
-        future.channel().writeAndFlush(bytes);
+        // 连接失败尝试重连一次
+        if (!connected.get())
+            connect(host, port);
+        if (connected.get()) {
+            future.channel().writeAndFlush(bytes);
+        } else {
+            System.out.println("server not available");
+        }
     }
 }
