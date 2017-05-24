@@ -1,7 +1,7 @@
 # Roc Log Service
 
 # 1. 介绍
-[Roc Log Service](https://github.com/roczpwu/rls) 是一款轻量级的支持本地或远端日志的软件项目，远端调用采用protobuf高性能传输协议。该项目特点是提供的接口简单，使用方便。
+[Roc Log Service](https://github.com/roczpwu/rls) 是一款轻量级的支持本地或远端异步日志的软件项目，远端调用采用protobuf高性能传输协议。该项目特点是提供的接口简单，使用方便。
 
 # 2. 依赖说明
 - Java 1.7+ 
